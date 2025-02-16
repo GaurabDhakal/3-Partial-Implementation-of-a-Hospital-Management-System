@@ -1,0 +1,10 @@
+323,Sara,Smith,20,07012345678,B1 234, Fever
+324,Mike,Jones,37,07555551234,L2 2AB, Headache
+424,David,Smith,15,07123456789,C1 ABC, Cough
+525,Prakash,Sharma,30,07098765432,Kathmandu 001, Cold
+626,Anita,Chhetri,25,07123456789,Lalitpur 234, Flu
+727,Suman,Thapa,40,07012398765,Bhairahawa 567, Stomachache
+828,Rekha,Koirala,28,07555567890,Chitwan 890, Backache
+929,Bishal,Adhikari,22,07198765432,Biratnagar 123, Sinusitis
+1030,Sunita,Rawal,35,07055555555,Pokhara, Jaw Lock
+4568800,Saurab,dhakal,13,9866551311,44602, Migraine, 
