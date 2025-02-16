@@ -2,7 +2,7 @@ from Person import Person
 class Patient(Person):
     """Patient class"""
 
-    def __init__(self, id, first_name, surname, age, mobile, postcode, symptoms, doctor=None):
+    def __init__(self, id, first_name, surname, age, mobile, postcode, symptoms, doctor='Not Assigned'):
         super().__init__(id,first_name, surname)
         """
         Args:
@@ -16,10 +16,10 @@ class Patient(Person):
         self.__age = age
         self.__mobile = mobile
         self.__postcode = postcode
-        self.__doctor = doctor;
+        self.__doctor = doctor
         self.__id = id
         self.__symptoms = symptoms
-
+    
     def full_name(self) :
         """full name is first_name and surname"""
         return f'{self.get_first_name()} {self.get_surname()}'
@@ -35,4 +35,5 @@ class Patient(Person):
         print(self.__symptoms)
 
     def __str__(self):
+        print(self.__doctor)
         return f'{self.full_name():^30}|{self.__doctor:^30}|{self.__age:^5}|{self.__mobile:^15}|{self.__postcode:^10}|{self.__symptoms:^10}|{self.__id:^10}'

@@ -11,10 +11,6 @@ class Admin:
             address (string, optional): Address Defaults to ''
         """
 
-        self.__username = username
-        self.__password = password
-        self.__address =  address
-
 
     def view(self,a_list):
         """
@@ -22,6 +18,7 @@ class Admin:
         Args:
             a_list (list): a list of printables
         """
+        print("I am here inside view!")
         for index, item in enumerate(a_list):
             print(f'{index+1:3}|{item}')
 
@@ -80,7 +77,6 @@ class Admin:
             first name, surname and ...
                             ... the speciality of the doctor in that order.
         """
-        #ToDo2
         first_name = input("Enter the first name of the Doctor: ")
         surname = input("Enter the surname of the Doctor: ")
         speciality = input("Enter the speciality of the Doctor: ")
@@ -92,14 +88,13 @@ class Admin:
         age = input("Enter the age of the patient: ")
         ph_number = input("Enter the phone number of the patient: ")
         post_code = input("Enter the post code or address: ")
-        id = self.get_random_id()
+        patient_id = self.get_random_id()
         symptoms = input("Enter the symptoms of the patient: ")
 
-        return id, first_name, surname, age, ph_number, post_code, symptoms
-    def registerDoctor(self, doctors):
+        return patient_id, first_name, surname, age, ph_number, post_code, symptoms
+    def register_doctor(self, doctors):
         # get the doctor details
         print('Enter the doctor\'s details:')
-        #ToDo4
         first_name,surname,speciality = self.get_doctor_details()
 
         # check if the name is already registered
@@ -108,10 +103,8 @@ class Admin:
             if first_name.strip() == doctor.get_first_name() and surname.strip() == doctor.get_surname():
                 print('Name already exists.')
                 name_exists = True
-                #ToDo5
                 break # save time and end the loop
 
-            #ToDo6
         if not name_exists:
             doc_id = self.get_random_id()
             new_doctor = Doctor(doc_id,first_name, surname, speciality)
@@ -121,15 +114,57 @@ class Admin:
             doctors.append(new_doctor)                                       # ... to the list of doctors
             print('Doctor registered.')
 
-    def registerPatient(self, patients):
+    def register_patient(self, patients):
         print('Enter the patient\'s details:')
-        id, first_name, surname, age, ph_number, post_code, symptoms = self.get_patient_details()
-        new_patient = Patient(id, first_name, surname, age, ph_number, post_code, symptoms)
-        line_text = f"\n{id},{first_name},{surname},{age},{ph_number},{post_code},{symptoms}"
+        patient_id, first_name, surname, age, ph_number, post_code, symptoms = self.get_patient_details()
+        new_patient = Patient(patient_id, first_name, surname, age, ph_number, post_code, symptoms)
+        line_text = f"\n{patient_id},{first_name},{surname},{age},{ph_number},{post_code},{symptoms}"
         with open("patients.txt", "a") as file:
             file.write(line_text)
         patients.append(new_patient);
         print("Patient Registered!")
+
+    def update_doctor(self, doctors, index):
+        print('Choose the field to be updated:')
+        print(' 1 First name')
+        print(' 2 Surname')
+        print(' 3 Speciality')
+        op = int(input('Input: '))
+
+        if op == 1:
+            new_first_name = input("Enter new first name: ")
+            doctors[index].set_first_name(new_first_name)
+        elif op == 2:
+            new_surname = input("Enter new surname: ")
+            doctors[index].set_surname(new_surname)
+        elif op == 3:
+            new_speciality = input("Enter new speciality: ")
+            doctors[index].set_speciality(new_speciality)
+
+    def delete_doctor(self, doctors):
+        print("-----Delete Doctor-----")
+        print('ID |          Full Name           |  Speciality')
+        self.view(doctors)
+
+        try:
+            index = int(input('Enter the ID of the doctor to be deleted: ')) - 1
+            if self.find_index(index, doctors):
+                doctors.pop(index)
+                print("Doctor deleted successfully.")
+                return True
+            print("Doctor not found. Please enter a valid ID.")
+        except IndexError:
+            print('The ID entered is incorrect.')
+        return False
+
+    def handle_registration(self, doctors, patients):
+        print("1 - Register Doctor")
+        print("2 - Register Patient")
+        reg_option = int(input("Option: "))
+        if reg_option == 1:
+            self.register_doctor(doctors)
+        elif reg_option == 2:
+            self.register_patient(patients)
 
     def doctor_management(self, doctors, patients):
         """
@@ -137,45 +172,22 @@ class Admin:
         Args:
             doctors (list<Doctor>): the list of all the doctors names
         """
-
         print("-----Doctor Management-----")
-
-        # menu
         print('Choose the operation:')
         print(' 1 - Register')
         print(' 2 - View')
         print(' 3 - Update')
         print(' 4 - Delete')
 
-        #ToDo3
-        while True:
-            try:
-                op = input('Input your choice: ')
-                break
-            except ValueError:
-                print('The choice entered is incorrect. Try again!')
+        op = input('Input your choice: ')
 
-
-        # register
         if op == '1':
             print("-----Register-----")
-            # ToDo1
-            print("1 - Register Doctor")
-            print("2 - Register Patient")
-            reg_option = int(input("Option: "))
-            if reg_option == 1:
-               self.registerDoctor(doctors)
-            elif reg_option == 2:
-                self.registerPatient(patients)
-
-        # View
+            self.handle_registration(doctors, patients)
         elif op == '2':
             print("-----List of Doctors-----")
-            #ToDo7
             print('ID |          Full name           |  Speciality')
             self.view(doctors)
-
-        # Update
         elif op == '3':
             while True:
                 print("-----Update Doctor`s Details-----")
@@ -183,65 +195,17 @@ class Admin:
                 self.view(doctors)
                 try:
                     index = int(input('Enter the ID of the doctor: ')) - 1
-                    doctor_index=self.find_index(index,doctors)
-                    if doctor_index!=False:
-
+                    if self.find_index(index, doctors):
+                        self.update_doctor(doctors, index)
                         break
-
-                    else:
-                        print("Doctor not found")
-
-
-                        # doctor_index is the ID mines one (-1)
-
-
-                except ValueError: # the entered id could not be changed into an int
+                    print("Doctor not found")
+                except ValueError:
                     print('The ID entered is incorrect')
-
-            # menu
-            print('Choose the field to be updated:')
-            print(' 1 First name')
-            print(' 2 Surname')
-            print(' 3 Speciality')
-            op = int(input('Input: ')) # make the user input lowercase
-
-            #ToDo8
-
-            if op == 1:
-                new_first_name = input("Enter new first name: ")
-                doctors[index].set_first_name(new_first_name)
-            elif op == 2:
-                new_surname = input("Enter new surname: ")
-                doctors[index].set_surname(new_surname)
-            elif op == 3:
-                new_speciality = input("Enter new speciality: ")
-                doctors[index].set_speciality(new_speciality)
-
-        # Delete
         elif op == '4':
-            while True:
-                print("-----Delete Doctor-----")
-                print('ID |          Full Name           |  Speciality')
-                self.view(doctors)
-
-                try:
-                    index = int(input('Enter the ID of the doctor to be deleted: ')) - 1
-                    doctor_index = self.find_index(index, doctors)  # Check if doctor exists
-
-                    if doctor_index != False:
-                        doctors.pop(index)  # Delete doctor using the correct index
-                        print("Doctor deleted successfully.")
-                        break  # Exit loop after deletion
-                    else:
-                        print("Doctor not found. Please enter a valid ID.")
-
-                except IndexError:
-                    print('The ID entered is incorrect.')
-
-
-        # if the id is not in the list of patients
+            while not self.delete_doctor(doctors):
+                continue
         else:
-            print('Invalid operation choosen. Check your spelling!')
+            print('Invalid operation chosen. Check your spelling!')
 
 
     def view_patient(self, patients):
@@ -252,7 +216,6 @@ class Admin:
         """
         print("-----View Patients-----")
         print('ID |          Full Name           |      Doctor`s Full Name      | Age |    Mobile     | Postcode ')
-        #ToDo10
         self.view(patients)
 
 
@@ -301,7 +264,6 @@ class Admin:
             if self.find_index(doctor_index,doctors)!=False:
 
                 # link the patients to the doctor and vice versa
-                #ToDo11
                 patients[patient_index].link(doctors[doctor_index].full_name())
                 doctors[doctor_index].add_patient(patients[patient_index])
                 print('The patient is now assign to the doctor.')
@@ -327,7 +289,7 @@ class Admin:
 
 
         try:
-            #ToDo12
+            
             patient_index = int(patient_index) - 1
             discharge_patients.append(patients[patient_index])
             patients.pop(patient_index)
@@ -346,7 +308,6 @@ class Admin:
 
         print("-----Discharged Patients-----")
         print('ID |          Full Name           |      Doctor`s Full Name      | Age |    Mobile     | Postcode')
-        #ToDo13
         self.view(discharged_patients)
 
 
@@ -387,7 +348,6 @@ class Admin:
             op = int(input('Input: '))
 
             if op == 1:
-                #ToDo14
                 new_username = input("Enter new admin username: ")
                 self.update_credentials(0, new_username)
 
@@ -402,12 +362,10 @@ class Admin:
 
 
             elif op == 3:
-                #ToDo15
                 new_address = input("Enter new admin address: ")
                 self.update_credentials(2, new_address)
 
             else:
-                #ToDo16
                 print("Enter the correct field to be updated.")
 
         except ValueError:
@@ -428,76 +386,77 @@ class Admin:
                 print(f"{member}")
 
 
-    def appointment(self, doctors, patients):
-        print(' 1 - Shedule appointment')
-        print(' 2 - View Appointment History of Doctors')
+    def get_patient_index(self, patients):
+        patient_index = input('Please enter the patient ID: ')
+        try:
+            patient_index = int(patient_index) - 1
+            if patient_index not in range(len(patients)):
+                print('The id entered was not found.')
+                return None
+            return patient_index
+        except ValueError:
+            print('The id entered is incorrect')
+            return None
+
+    def get_doctor_index(self, doctors):
         while True:
             try:
-                op = input('Input your choice: ')
-                break
+                index = int(input('Enter the ID of the doctor: ')) - 1
+                if self.find_index(index, doctors):
+                    return index
+                print("Doctor not found")
             except ValueError:
-                print('The choice entered is incorrect. Try again!')
+                print('The ID entered is incorrect')
 
+    def validate_datetime(self):
+        while True:
+            date = input("Enter Date (YYYY-MM-DD): ")
+            time = input("Enter Time (HH:MM): ")
+            if len(date) == 10 and date[4] == '-' and date[7] == '-' and len(time) == 5 and time[2] == ':':
+                return date, time
+            print("Invalid format! Please use YYYY-MM-DD for date and HH:MM for time.")
 
+    def schedule_appointment(self, doctors, patients):
+        print("-----Patients-----")
+        print('ID |          Full Name           |      Doctor`s Full Name      | Age |    Mobile     | Postcode ')
+        self.view(patients)
 
-        if op == '1':
-            print("-----Patients-----")
-            print('ID |          Full Name           |      Doctor`s Full Name      | Age |    Mobile     | Postcode ')
-            self.view(patients)
+        patient_index = self.get_patient_index(patients)
+        if patient_index is None:
+            return
 
-            patient_index = input('Please enter the patient ID: ')
-            try:
-                # patient_index is the patient ID mines one (-1)
-                patient_index = int(patient_index) -1
+        print("-----Doctors-----")
+        self.view(doctors)
+        doctor_index = self.get_doctor_index(doctors)
 
-            # check if the id is not in the list of patients
-                if patient_index not in range(len(patients)):
-                    print('The id entered was not found.')
-                    return # stop the procedures
-            except ValueError: # the entered id could not be changed into an int
-                print('The id entered is incorrect')
-                return # stop the procedures
+        date, time = self.validate_datetime()
+        doctors[doctor_index].set_appointments(date, time)
+        print(f"Patient {patients[patient_index].full_name()} has Appointment scheduled for Doctor {doctors[doctor_index].full_name()} on {date} at {time}.")
 
-            print("-----Doctors-----")
-            self.view(doctors)
-            while True:
-                try:
-                    index = int(input('Enter the ID of the doctor: ')) - 1
-                    doctor_index=self.find_index(index,doctors)
-                    if doctor_index!=False:
-                        break
+    def view_appointment_history(self, doctors):
+        for doctor in doctors:
+            appointments = doctor.get_appointments()
+            if not appointments:
+                print(f"No appointments scheduled for Dr. {doctor.full_name()}")
+                continue
+            
+            print(f"Appointments for Dr. {doctor.full_name()} ({doctor.get_speciality()}):")
+            for date, time in appointments.items():
+                for times in time:
+                    print(f"Date: {date} | Time: {times}")
 
-                    else:
-                        print("Doctor not found")
-                                # doctor_index is the ID mines one (-1)
-
-                except ValueError: # the entered id could not be changed into an int
-                            print('The ID entered is incorrect')
-
-            while True:
-                date = input("Enter Date (YYYY-MM-DD): ")
-                time = input("Enter Time (HH:MM): ")
-
-                if len(date) == 10 and date[4] == '-' and date[7] == '-':
-                # Check if the time is in the correct format (HH:MM)
-                    if len(time) == 5 and time[2] == ':':
-                        doctors[doctor_index].set_appointments(date, time)
-                        print(f"Patient {patients[patient_index].full_name()} has Appointment scheduled for Doctor {doctors[doctor_index].full_name()} on {date} at {time}.")
-                        break
-
-                print("Invalid format! Please use YYYY-MM-DD for date and HH:MM for time.")
-
-        elif op == '2':
-            for doctor in doctors:
-                appointments = doctor.get_appointments()
-
-                if not appointments:
-                    print(f"No appointments scheduled for Dr. {doctor.full_name()}")
-                else:
-                    print(f"Appointments for Dr. {doctor.full_name()} ({doctor.get_speciality()}):")
-                    for date, time in appointments.items():
-                        for times in time:
-                            print(f"Date: {date} | Time: {times}")
+    def appointment(self, doctors, patients):
+        print(' 1 - Schedule appointment')
+        print(' 2 - View Appointment History of Doctors')
+        
+        try:
+            op = input('Input your choice: ')
+            if op == '1':
+                self.schedule_appointment(doctors, patients)
+            elif op == '2':
+                self.view_appointment_history(doctors)
+        except ValueError:
+            print('The choice entered is incorrect.')
 
 
     def relocate_doctor_to_patient(self, patients, doctors):
@@ -545,7 +504,6 @@ class Admin:
                             doc.remove_patient(patients[patient_index])  # Decrease count
                             break
                 # link the patients to the doctor and vice versa
-                #ToDo11
                 patients[patient_index].link(doctors[doctor_index].full_name())
                 doctors[doctor_index].add_patient(patients[patient_index])
                 print('The patient is now relocated to the doctor.')

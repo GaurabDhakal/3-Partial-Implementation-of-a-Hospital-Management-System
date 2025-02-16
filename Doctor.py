@@ -13,8 +13,6 @@ class Doctor(Person):
             speciality (string): Doctor`s speciality
         """
 
-        # self.__first_name = first_name
-        # self.__surname = surname
         self.__speciality = speciality
         self.__patients = []
         self.__appointments = {}
@@ -22,11 +20,9 @@ class Doctor(Person):
 
    
     def get_speciality(self) :
-        #ToDo6
         return self.__speciality
 
     def set_speciality(self, new_speciality):
-        #ToDo7
         self.__speciality = new_speciality
 
     def add_patient(self, patient):
