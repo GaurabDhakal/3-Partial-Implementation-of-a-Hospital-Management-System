@@ -1,5 +1,6 @@
 from Doctor import Doctor
 from Patient import Patient
+
 class Admin:
     """A class that deals with the Admin operations"""
     def __init__(self, username, password, address = ''):

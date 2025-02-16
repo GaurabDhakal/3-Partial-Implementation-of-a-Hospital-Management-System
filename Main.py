@@ -1,4 +1,3 @@
-# Imports
 from Admin import Admin
 from Doctor import Doctor
 from Patient import Patient
@@ -13,18 +12,18 @@ def main():
     patients = []
     with open("doctors.txt", "r") as file:
         for line in file:
-            strippedLine = line.strip().split(",")
-            doctors.append(Doctor(strippedLine[0], strippedLine[1], strippedLine[2], strippedLine[3]))
+            stripped_line_doctors = line.strip().split(",")
+            doctors.append(Doctor(stripped_line_doctors[0], stripped_line_doctors[1], stripped_line_doctors[2], stripped_line_doctors[3]))
 
     with open("patients.txt", "r") as file:
         for line in file:
-            strippedLine = line.strip().split(",")
-            patients.append(Patient(strippedLine[0], strippedLine[1], strippedLine[2], strippedLine[3], strippedLine[4], strippedLine[5], strippedLine[6]))
+            stripped_line = line.strip().split(",")
+            patients.append(Patient(stripped_line[0], stripped_line[1], stripped_line[2], stripped_line[3], stripped_line[4], stripped_line[5], stripped_line[6]))
     admin = Admin('admin','123','B1 1AB') # username is 'admin', password is '123'
 
-    discharged_patients = []
+    discharged_patients = []    
+    
 
-    # keep trying to login tell the login details are correct
     while True:
         if admin.login():
             running = True # allow the program to run
@@ -51,17 +50,15 @@ def main():
 
         if op == '1':
             # 1- Register/view/update/delete doctor
-           admin.doctor_management(doctors, patients)
+            admin.doctor_management(doctors, patients)
         elif op == '2':
             # 2- View or discharge patients
-            #ToDo2
             admin.view_patient(patients)
 
             while True:
                 op = input('Do you want to discharge a patient(Y/N):').lower()
 
                 if op == 'yes' or op == 'y':
-                    #ToDo3
                     admin.discharge(patients,discharged_patients)
 
                 elif op == 'no' or op == 'n':
@@ -73,7 +70,6 @@ def main():
 
         elif op == '3':
             # 3 - view discharged patients
-            #ToDo4
             admin.view_discharge(discharged_patients)
 
         elif op == '4':
@@ -98,7 +94,6 @@ def main():
 
         elif op == '0':
             # 6 - Quit
-            #ToDo5
             print("You have quit the system.")
             running = False
 

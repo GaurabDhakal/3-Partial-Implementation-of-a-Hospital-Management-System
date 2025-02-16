@@ -2,7 +2,7 @@ from Person import Person
 class Patient(Person):
     """Patient class"""
 
-    def __init__(self, id, first_name, surname, age, mobile, postcode, symptoms):
+    def __init__(self, id, first_name, surname, age, mobile, postcode, symptoms, doctor=None):
         super().__init__(id,first_name, surname)
         """
         Args:
@@ -13,29 +13,17 @@ class Patient(Person):
             address (string): address
         """
 
-        #ToDo1
-        # self.__first_name = first_name
-        # self.__surname = surname
         self.__age = age
         self.__mobile = mobile
         self.__postcode = postcode
-        self.__doctor = 'None'
+        self.__doctor = doctor;
         self.__id = id
         self.__symptoms = symptoms
 
     def full_name(self) :
         """full name is first_name and surname"""
-        #ToDo2
         return f'{self.get_first_name()} {self.get_surname()}'
-
-    # def get_first_name(self):
-    #     return self.__first_name
-    
-    # def get_surname(self):
-    #     return self.__surname
-
     def get_doctor(self) :
-        #ToDo3
         return self.__doctor
 
     def link(self, doctor):
